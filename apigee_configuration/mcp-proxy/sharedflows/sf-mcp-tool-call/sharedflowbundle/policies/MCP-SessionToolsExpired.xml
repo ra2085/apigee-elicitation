@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RaiseFault async="false" continueOnError="false" enabled="true" name="MCP-SessionToolsExpired">
+  <DisplayName>MCP-SessionToolsExpired</DisplayName>
+  <Properties/>
+  <FaultResponse>
+    <Set>
+      <Headers/>
+      <Payload contentType="application/json">{
+                "jsonrpc": "2.0",
+                "id": {jsonrpc_opid},
+                "error": {
+                    "code": -32001,
+                    "message": "Session tools cache expired or not initialized. Please call tools/list first."
+                }
+            }</Payload>
+      <StatusCode>400</StatusCode>
+      <ReasonPhrase>Bad Request</ReasonPhrase>
+    </Set>
+  </FaultResponse>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

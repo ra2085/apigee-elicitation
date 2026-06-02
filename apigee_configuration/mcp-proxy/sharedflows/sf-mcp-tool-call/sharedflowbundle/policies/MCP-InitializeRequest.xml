@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ServiceCallout async="false" continueOnError="false" enabled="true" name="MCP-InitializeRequest">
+  <DisplayName>MCP-InitializeRequest</DisplayName>
+  <Properties/>
+  <Request clearPayload="true" variable="mcp_initialize_request">
+    <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+    <Set>
+      <Headers>
+        <Header name="content-type">application/json</Header>
+        <Header name="Accept">application/json,text/event-stream</Header>
+      </Headers>
+      <Payload>{"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"mcp","version":"0.1.0"}},"jsonrpc":"2.0","id":0}
+            </Payload>
+      <Verb>POST</Verb>
+    </Set>
+  </Request>
+  <Response>mcp_initialize_response</Response>
+  <HTTPTargetConnection>
+    <Properties/>
+    <URL>http://{mcp_target_host}/{mcp_target_path}</URL>
+  </HTTPTargetConnection>
+</ServiceCallout>

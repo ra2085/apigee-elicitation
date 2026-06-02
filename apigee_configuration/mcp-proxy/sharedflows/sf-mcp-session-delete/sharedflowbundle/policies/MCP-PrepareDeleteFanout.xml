@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Javascript async="false" continueOnError="false" enabled="true" timeLimit="200" name="MCP-PrepareDeleteFanout">
+  <DisplayName>MCP-PrepareDeleteFanout</DisplayName>
+  <Properties/>
+  <ResourceURL>jsc://mcp-prep-sessions-delete.js</ResourceURL>
+</Javascript>

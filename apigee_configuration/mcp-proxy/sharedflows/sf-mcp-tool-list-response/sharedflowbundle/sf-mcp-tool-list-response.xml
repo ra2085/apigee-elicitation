@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlowBundle revision="1" name="sf-mcp-tool-list-response">
+    <DisplayName>sf-mcp-tool-list-response</DisplayName>
+    <Description>Shared Flow for MCP Tool List Response Logic</Description>
+    <SharedFlows>
+        <SharedFlow>default</SharedFlow>
+    </SharedFlows>
+    <Policies>
+        <Policy>MCP-ListToolsResponse</Policy>
+        <Policy>MCP-CollectToolLists</Policy>
+        <Policy>MCP-PersistSessionTools</Policy>
+        <Policy>MCP-ServeCachedToolList</Policy>
+    </Policies>
+    <Resources>
+        <Resource>jsc://mcp-collect-tool-lists.js</Resource>
+    </Resources>
+</SharedFlowBundle>

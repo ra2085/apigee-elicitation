@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elicitation-server-deployment
+  namespace: apigee
+  labels:
+    app: elicitation-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elicitation-server
+  template:
+    metadata:
+      labels:
+        app: elicitation-server
+    spec:
+      containers:
+      - name: server
+        image: gcr.io/apigee-hw/elicitation-server:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: FASTMCP_PORT
+          value: "8080"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elicitation-server-service
+  namespace: apigee
+spec:
+  type: ClusterIP
+  selector:
+    app: elicitation-server
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080

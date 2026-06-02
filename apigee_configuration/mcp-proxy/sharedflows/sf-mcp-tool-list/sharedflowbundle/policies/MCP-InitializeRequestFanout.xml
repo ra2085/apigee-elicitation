@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<JavaCallout async="false" continueOnError="true" enabled="true" name="MCP-InitializeRequestFanout">
+  <DisplayName>MCP-InitializeRequestFanout</DisplayName>
+  <Properties>
+    <!-- Assumes a preceding JS policy has populated these variables from cache -->
+    <Property name="urls">{mcp_target_urls}</Property>
+    <Property name="method">POST</Property>
+    <Property name="headers">Content-Type:application/json|Accept:application/json,text/event-stream</Property>
+    <Property name="body">{propertyset.mcp-targets.initialize_req}</Property>
+    <!-- It's best to continue even if one deletion fails -->
+    <Property name="continue-on-error">true</Property>
+    <Property name="output-variable-prefix">fanout_initialize_request</Property>
+  </Properties>
+  <ClassName>com.google.apigee.callouts.ServiceFanout</ClassName>
+  <ResourceURL>java://service-fanout.jar</ResourceURL>
+</JavaCallout>

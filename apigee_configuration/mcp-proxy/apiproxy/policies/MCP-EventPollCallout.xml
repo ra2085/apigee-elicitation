@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FlowCallout async="false" continueOnError="false" enabled="true" name="MCP-EventPollCallout">
+  <DisplayName>MCP-EventPollCallout</DisplayName>
+  <SharedFlowBundle>sf-mcp-event-poll</SharedFlowBundle>
+</FlowCallout>

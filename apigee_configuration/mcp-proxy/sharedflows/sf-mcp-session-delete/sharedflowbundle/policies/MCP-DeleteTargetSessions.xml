@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<InvalidateCache async="false" continueOnError="false" enabled="true" name="MCP-DeleteTargetSessions">
+  <DisplayName>MCP-DeleteTargetSessions</DisplayName>
+  <Properties/>
+  <CacheKey>
+    <KeyFragment ref="request.header.mcp-session-id"/>
+  </CacheKey>
+  <CacheResource>mcp_target_sessions</CacheResource>
+  <Scope>Global</Scope>
+  <PurgeChildEntries>true</PurgeChildEntries>
+</InvalidateCache>

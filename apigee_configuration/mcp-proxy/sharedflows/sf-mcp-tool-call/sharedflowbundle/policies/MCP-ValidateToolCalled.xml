@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="MCP-ValidateToolCalled">
+  <DisplayName>MCP-ValidateToolCalled</DisplayName>
+  <Properties/>
+  <AssignVariable>
+    <Name>client_audience</Name>
+    <Template>{request.header.x-audience}</Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_tool_called</Name>
+    <Template>{jsonPath('$.params.name',request.content)}</Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_tool_filter</Name>
+    <Template>
+      <![CDATA[ $.result.tools[?(@.name=='{mcp_tool_called}')]._meta.audiences[?(@=='{client_audience}')] ]]>
+    </Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_host_filter</Name>
+    <Template>
+      <![CDATA[ $.result.tools[?(@.name=='{mcp_tool_called}')]._meta.mcp_target_host ]]>
+    </Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_host</Name>
+    <Template>{jsonPath(mcp_target_host_filter,mcp_session_tools,false)}</Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_path_filter</Name>
+    <Template>
+      <![CDATA[ $.result.tools[?(@.name=='{mcp_tool_called}')]._meta.mcp_target_path ]]>
+    </Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_path</Name>
+    <Template>{jsonPath(mcp_target_path_filter,mcp_session_tools,false)}</Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_protocol_filter</Name>
+    <Template>
+      <![CDATA[ $.result.tools[?(@.name=='{mcp_tool_called}')]._meta.mcp_target_protocol ]]>
+    </Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_protocol</Name>
+    <Template>{jsonPath(mcp_target_protocol_filter,mcp_session_tools,false)}</Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_url_filter</Name>
+    <Template>
+      <![CDATA[ $.result.tools[?(@.name=='{mcp_tool_called}')]._meta.mcp_target_url ]]>
+    </Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_url</Name>
+    <Template>{jsonPath(mcp_target_url_filter,mcp_session_tools,false)}</Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_tool_validated</Name>
+    <Template>{jsonPath(mcp_tool_filter,mcp_session_tools,true)}</Template>
+  </AssignVariable>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>

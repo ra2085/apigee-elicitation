@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PopulateCache async="false" continueOnError="false" enabled="true" name="MCP-PersistActiveTarget">
+  <DisplayName>MCP-PersistActiveTarget</DisplayName>
+  <Properties/>
+  <CacheKey>
+    <KeyFragment ref="mcp_session_id"/>
+    <KeyFragment>active_target</KeyFragment>
+  </CacheKey>
+  <CacheResource>mcp_target_session</CacheResource>
+  <Scope>Global</Scope>
+  <ExpirySettings>
+    <TimeoutInSeconds>300</TimeoutInSeconds>
+  </ExpirySettings>
+  <Source>mcp_target_url</Source>
+</PopulateCache>

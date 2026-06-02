@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="MCP-PrepareTargetSessions">
+  <DisplayName>MCP-PrepareTargetSessions</DisplayName>
+  <Properties/>
+  <AssignVariable>
+    <Name>mcp_target_sessions</Name>
+    <Template>{mcp_target_url}|{mcp_initialize_response.header.mcp-session-id},{mcp_target_sessions}</Template>
+  </AssignVariable>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>

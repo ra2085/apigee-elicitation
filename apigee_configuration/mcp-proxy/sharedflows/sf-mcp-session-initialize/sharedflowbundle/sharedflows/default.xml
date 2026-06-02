@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+  <Step>
+    <Name>MCP-InitializeSession</Name>
+  </Step>
+  <Step>
+    <Name>MCP-PersistSession</Name>
+  </Step>
+  <Step>
+    <Name>MCP-InitializeReponse</Name>
+  </Step>
+</SharedFlow>

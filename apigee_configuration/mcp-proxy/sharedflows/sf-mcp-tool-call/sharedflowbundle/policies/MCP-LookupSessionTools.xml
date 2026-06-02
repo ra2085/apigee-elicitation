@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<LookupCache async="false" continueOnError="false" enabled="true" name="MCP-LookupSessionTools">
+  <DisplayName>MCP-LookupSessionTools</DisplayName>
+  <Properties/>
+  <CacheKey>
+    <Prefix>mcp</Prefix>
+    <KeyFragment ref="mcp_session_id"/>
+  </CacheKey>
+  <CacheResource>mcp_session_tooling</CacheResource>
+  <Scope>Global</Scope>
+  <AssignTo>mcp_session_tools</AssignTo>
+</LookupCache>

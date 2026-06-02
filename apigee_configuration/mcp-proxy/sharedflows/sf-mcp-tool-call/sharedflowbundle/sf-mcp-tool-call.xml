@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlowBundle revision="6" name="sf-mcp-tool-call">
+  <DisplayName>sf-mcp-tool-call</DisplayName>
+  <Description>Shared Flow for MCP Tool Call</Description>
+  <CreatedAt>1780068415305</CreatedAt>
+  <LastModifiedAt>1780068435933</LastModifiedAt>
+  <Policies>
+    <Policy>MCP-PrepareTargetSessions</Policy>
+    <Policy>MCP-LookupSessionTools</Policy>
+    <Policy>MCP-InitializedRequest</Policy>
+    <Policy>MCP-PersistTargetSessions</Policy>
+    <Policy>MCP-LookupTargetSession</Policy>
+    <Policy>MCP-SetRequest</Policy>
+    <Policy>MCP-InitializeRequest</Policy>
+    <Policy>MCP-LookupTargetSessions</Policy>
+    <Policy>MCP-PersistTargetSession</Policy>
+    <Policy>MCP-PersistActiveTarget</Policy>
+    <Policy>MCP-SessionToolsExpired</Policy>
+    <Policy>MCP-ValidateToolCalled</Policy>
+  </Policies>
+  <SharedFlows>
+    <SharedFlow>default</SharedFlow>
+  </SharedFlows>
+  <subType>SharedFlow</subType>
+</SharedFlowBundle>

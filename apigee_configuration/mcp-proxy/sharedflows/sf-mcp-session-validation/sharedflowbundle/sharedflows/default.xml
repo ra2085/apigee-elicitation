@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+    <Step>
+        <Name>MCP-LookupSession</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSession.cachehit = "false"</Condition>
+        <Name>MCP-InvalidSession</Name>
+    </Step>
+</SharedFlow>

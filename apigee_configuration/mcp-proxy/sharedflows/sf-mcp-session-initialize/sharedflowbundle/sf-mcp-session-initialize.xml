@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlowBundle revision="9" name="sf-mcp-session-initialize">
+  <DisplayName>sf-mcp-session-initialize</DisplayName>
+  <Description>Shared Flow for MCP Session Initialization</Description>
+  <CreatedAt>1780068354060</CreatedAt>
+  <LastModifiedAt>1780068354060</LastModifiedAt>
+  <Policies>
+    <Policy>MCP-InitializeReponse</Policy>
+    <Policy>MCP-InitializeSession</Policy>
+    <Policy>MCP-PersistSession</Policy>
+  </Policies>
+  <SharedFlows>
+    <SharedFlow>default</SharedFlow>
+  </SharedFlows>
+  <subType>SharedFlow</subType>
+</SharedFlowBundle>

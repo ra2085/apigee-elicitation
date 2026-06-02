@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="MCP-InitializeSession">
+  <DisplayName>MCP-InitializeSession</DisplayName>
+  <Properties/>
+  <AssignVariable>
+    <Name>mcp_session_id</Name>
+    <Template>{createUuid()}</Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_session_client_info</Name>
+    <Template>{{jsonPath('$.params.clientInfo',request.content)}}</Template>
+  </AssignVariable>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="false" transport="http" type="response"/>
+</AssignMessage>

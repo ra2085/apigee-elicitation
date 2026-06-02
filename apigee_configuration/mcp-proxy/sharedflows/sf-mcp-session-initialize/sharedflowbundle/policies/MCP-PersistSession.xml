@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PopulateCache async="false" continueOnError="false" enabled="true" name="MCP-PersistSession">
+  <DisplayName>MCP-PersistSession</DisplayName>
+  <Properties/>
+  <CacheKey>
+    <KeyFragment ref="mcp_session_id"/>
+  </CacheKey>
+  <CacheResource>mcp_sessions</CacheResource>
+  <Scope>Global</Scope>
+  <ExpirySettings>
+    <TimeoutInSeconds>3600</TimeoutInSeconds>
+  </ExpirySettings>
+  <Source>mcp_session_client_info</Source>
+</PopulateCache>

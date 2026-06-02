@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ServiceCallout async="false" continueOnError="false" enabled="true" name="MCP-InitializedRequest">
+  <DisplayName>MCP-InitializedRequest</DisplayName>
+  <Properties/>
+  <Request clearPayload="true" variable="mcp_initialized_request">
+    <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+    <Set>
+      <Headers>
+        <Header name="Content-Type">application/json</Header>
+        <Header name="Accept">application/json,text/event-stream</Header>
+        <Header name="mcp-session-id">{mcp_initialize_response.header.mcp-session-id}</Header>
+      </Headers>
+      <Payload>{"method":"notifications/initialized","jsonrpc":"2.0"}
+            </Payload>
+      <Verb>POST</Verb>
+    </Set>
+  </Request>
+  <Response>mcp_initialized_response</Response>
+  <HTTPTargetConnection>
+    <Properties/>
+    <URL>http://{mcp_target_host}/{mcp_target_path}</URL>
+  </HTTPTargetConnection>
+</ServiceCallout>

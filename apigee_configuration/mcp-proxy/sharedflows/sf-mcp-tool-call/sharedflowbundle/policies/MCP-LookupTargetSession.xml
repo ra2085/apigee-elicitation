@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<LookupCache async="false" continueOnError="false" enabled="true" name="MCP-LookupTargetSession">
+  <DisplayName>MCP-LookupTargetSession</DisplayName>
+  <Properties/>
+  <CacheKey>
+    <KeyFragment ref="mcp_session_id"/>
+    <KeyFragment ref="mcp_target_url"/>
+  </CacheKey>
+  <CacheResource>mcp_target_session</CacheResource>
+  <Scope>Global</Scope>
+  <AssignTo>mcp_initialize_response.header.mcp-session-id</AssignTo>
+</LookupCache>

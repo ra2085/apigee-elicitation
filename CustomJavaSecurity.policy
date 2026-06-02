@@ -1,0 +1,5 @@
+// javacallout code has just read permission in the installed dir and everything below it
+  grant codeBase "file:${javacallout.dir}/-"  {
+    permission java.net.URLPermission "http://*.apigee.svc.cluster.local:8002/*", "*:*";
+    permission java.net.URLPermission "http://*.apigee.svc.cluster.local:80/*", "*:*";
+  }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="47" name="mcp-fanout">
+  <DisplayName/>
+  <Description/>
+  <CreatedAt>1780002383942</CreatedAt>
+  <LastModifiedAt>1780002383942</LastModifiedAt>
+  <BasePaths>/mcpf</BasePaths>
+  <Policies>
+    <Policy>MCP-ToolCall</Policy>
+    <Policy>MCP-InitializedResponse</Policy>
+    <Policy>MCP-ToolsCallResponse</Policy>
+    <Policy>MCP-PingResponse</Policy>
+    <Policy>MCP-Method</Policy>
+    <Policy>MCP-SessionInitialize</Policy>
+    <Policy>MCP-SessionValidation</Policy>
+    <Policy>MCP-ToolList</Policy>
+    <Policy>MCP-CollectEvents</Policy>
+    <Policy>MCP-Session</Policy>
+    <Policy>MCP-SessionDelete</Policy>
+    <Policy>MCP-ToolListResponse</Policy>
+    <Policy>MCP-PromptsListResponse</Policy>
+    <Policy>MCP-Parse</Policy>
+    <Policy>CORS</Policy>
+    <Policy>MCP-EventPollCallout</Policy>
+    <Policy>MCP-LookupTargetSessionId</Policy>
+    <Policy>MCP-SetTargetSessionHeader</Policy>
+    <Policy>MCP-SetResponseSessionHeader</Policy>
+  </Policies>
+  <ProxyEndpoints>
+    <ProxyEndpoint>default</ProxyEndpoint>
+  </ProxyEndpoints>
+  <Resources>
+    <Resource>properties://mcp-targets.properties</Resource>
+    <Resource>jsc://mcp-collect-events.js</Resource>
+  </Resources>
+  <TargetEndpoints>
+    <TargetEndpoint>mcp-server</TargetEndpoint>
+  </TargetEndpoints>
+</APIProxy>

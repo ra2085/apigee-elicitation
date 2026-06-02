@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+    <Step>
+        <Name>MCP-LookupTargetSessions</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupTargetSessions.cachehit = "true"</Condition>
+        <Name>MCP-PrepareEventPollFanout</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupTargetSessions.cachehit = "true"</Condition>
+        <Name>MCP-EventPollFanout</Name>
+    </Step>
+    <Step>
+        <Name>MCP-AggregateEvents</Name>
+    </Step>
+</SharedFlow>

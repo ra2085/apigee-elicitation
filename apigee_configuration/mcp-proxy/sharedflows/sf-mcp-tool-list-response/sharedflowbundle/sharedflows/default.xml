@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit = "true"</Condition>
+        <Name>MCP-ServeCachedToolList</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit != "true"</Condition>
+        <Name>MCP-ListToolsResponse</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit != "true"</Condition>
+        <Name>MCP-CollectToolLists</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit != "true"</Condition>
+        <Name>MCP-PersistTargetSessions</Name>
+    </Step>
+    <Step>
+        <Condition>(lookupcache.MCP-LookupSessionTools.cachehit = "false")</Condition>
+        <Name>MCP-PersistSessionTools</Name>
+    </Step>
+</SharedFlow>
