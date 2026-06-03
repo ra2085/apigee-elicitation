@@ -28,6 +28,9 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
     <apiproxy.java.rsrc.dir>../apiproxy/resources/java</apiproxy.java.rsrc.dir>
+    <sf.tool-list.java.rsrc.dir>../sharedflows/sf-mcp-tool-list/sharedflowbundle/resources/java</sf.tool-list.java.rsrc.dir>
+    <sf.event-poll.java.rsrc.dir>../sharedflows/sf-mcp-event-poll/sharedflowbundle/resources/java</sf.event-poll.java.rsrc.dir>
+    <sf.session-delete.java.rsrc.dir>../sharedflows/sf-mcp-session-delete/sharedflowbundle/resources/java</sf.session-delete.java.rsrc.dir>
   </properties>
 
   <repositories>
@@ -135,6 +138,9 @@
               <target>
                 <delete>
                   <fileset dir="${apiproxy.java.rsrc.dir}" includes="*.jar" />
+                  <fileset dir="${sf.tool-list.java.rsrc.dir}" includes="*.jar" />
+                  <fileset dir="${sf.event-poll.java.rsrc.dir}" includes="*.jar" />
+                  <fileset dir="${sf.session-delete.java.rsrc.dir}" includes="*.jar" />
                 </delete>
               </target>
             </configuration>
@@ -147,8 +153,24 @@
                 <copy todir="${apiproxy.java.rsrc.dir}">
                   <fileset dir="${project.build.directory}">
                     <include name="${project.build.finalName}.jar" />
-                    <!-- copy any additional dependencies: -->
-                    <!-- <include name="lib/*.jar" /> -->
+                  </fileset>
+                  <mapper type="flatten" />
+                </copy>
+                <copy todir="${sf.tool-list.java.rsrc.dir}">
+                  <fileset dir="${project.build.directory}">
+                    <include name="${project.build.finalName}.jar" />
+                  </fileset>
+                  <mapper type="flatten" />
+                </copy>
+                <copy todir="${sf.event-poll.java.rsrc.dir}">
+                  <fileset dir="${project.build.directory}">
+                    <include name="${project.build.finalName}.jar" />
+                  </fileset>
+                  <mapper type="flatten" />
+                </copy>
+                <copy todir="${sf.session-delete.java.rsrc.dir}">
+                  <fileset dir="${project.build.directory}">
+                    <include name="${project.build.finalName}.jar" />
                   </fileset>
                   <mapper type="flatten" />
                 </copy>

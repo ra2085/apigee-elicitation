@@ -60,4 +60,28 @@ public class ServiceFanoutTest {
     // I will modify the test to just run locally and print output if I can, or use reflection?
     // No, I should fix the code.
   }
+
+  @Test
+  public void testInvalidConnectTimeout() {
+    Map<String, String> props = new HashMap<>();
+    props.put("urls", "http://localhost:1");
+    props.put("connect-timeout-seconds", "invalid_value");
+
+    ServiceFanout callout = new ServiceFanout(props);
+    ExecutionResult result = callout.execute(msgCtxt, exeCtxt);
+    assertEquals(result, ExecutionResult.ABORT);
+    verify(msgCtxt).setVariable(eq("servicefanout_error"), contains("connect-timeout-seconds"));
+  }
+
+  @Test
+  public void testValidConnectTimeout() {
+    Map<String, String> props = new HashMap<>();
+    props.put("urls", "http://localhost:1");
+    props.put("connect-timeout-seconds", "5");
+    props.put("continue-on-error", "true"); // Continue so it doesn't abort on connect error
+
+    ServiceFanout callout = new ServiceFanout(props);
+    ExecutionResult result = callout.execute(msgCtxt, exeCtxt);
+    assertEquals(result, ExecutionResult.SUCCESS);
+  }
 }

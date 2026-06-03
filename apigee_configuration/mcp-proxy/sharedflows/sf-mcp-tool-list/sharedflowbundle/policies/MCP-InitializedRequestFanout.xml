@@ -7,6 +7,7 @@
     <Property name="method">POST</Property>
     <Property name="headers">Content-Type:application/json|Accept:application/json,text/event-stream|mcp-session-id:{mcp_target_session_id_{servicefanout_current_index}}</Property>
     <Property name="body">{propertyset.mcp-targets.initialized_req}</Property>
+    <Property name="connect-timeout-seconds">5</Property>
     <!-- It's best to continue even if one deletion fails -->
     <Property name="continue-on-error">true</Property>
     <Property name="output-variable-prefix">fanout_initialized_request</Property>

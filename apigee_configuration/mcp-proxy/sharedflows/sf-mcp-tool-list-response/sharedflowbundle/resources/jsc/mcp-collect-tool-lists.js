@@ -1,6 +1,7 @@
 var originalId = context.getVariable("jsonrpc_opid");
 var mcp_targets = context.getVariable("propertyset.mcp-targets.mcp_targets");
 mcp_targets = JSON.parse(mcp_targets);
+
 function combineMcpResponses(responses, originalId) {
     // Return null or a default object if the input is empty or invalid
     if (!responses || Object.prototype.toString.call(responses) !== '[object Array]' || responses.length === 0) {
@@ -9,7 +10,7 @@ function combineMcpResponses(responses, originalId) {
 
     // Initialize the base structure using the first object's metadata
     var combinedResponse = {
-        "jsonrpc": responses[0].jsonrpc || "2.0",
+        "jsonrpc": responses[0].response.jsonrpc || "2.0",
         "id": originalId || 1,
         "result": {
             "tools": []
@@ -18,7 +19,8 @@ function combineMcpResponses(responses, originalId) {
 
     // Iterate over the array of responses
     for (var i = 0; i < responses.length; i++) {
-        var currentResponse = responses[i];
+        var currentResponse = responses[i].response;
+        var target = responses[i].target;
 
         // Check if the current response has the result.tools structure
         if (currentResponse && currentResponse.result && currentResponse.result.tools) {
@@ -28,14 +30,14 @@ function combineMcpResponses(responses, originalId) {
             for (var j = 0; j < tools.length; j++) {
                 combinedResponse.result.tools.push(tools[j]);
                 tools[j]._meta = {
-                  "mcp_target_host": mcp_targets[i].mcp_target_host,
-                  "mcp_target_path": mcp_targets[i].mcp_target_path,
-                  "mcp_target_protocol": mcp_targets[i].mcp_target_protocol,
-                  "mcp_target_url": mcp_targets[i].mcp_target_url,
+                  "mcp_target_host": target.mcp_target_host,
+                  "mcp_target_path": target.mcp_target_path,
+                  "mcp_target_protocol": target.mcp_target_protocol,
+                  "mcp_target_url": target.mcp_target_url,
                   "_fastmcp": {
                     "tags": []
                   }
-                }
+                };
             }
         }
     }
@@ -60,8 +62,10 @@ for (var x = 0; x < count; x++) {
       
       try {
         var current = JSON.parse(cleanString);
-        // Do what you need with 'current' here
-        toReturn.push(current);
+        toReturn.push({
+          target: mcp_targets[x],
+          response: current
+        });
       } catch (e) {
         // It's highly recommended to wrap this in a try/catch in Rhino
         // so a malformed payload doesn't crash your entire Apigee proxy!
@@ -80,13 +84,19 @@ for (var x = 0; x < count; x++) {
   var index = x + 1;
   var currentHeadersStr = context.getVariable("fanout_initialize_request." + index + ".headers");
   if (currentHeadersStr) {
-    var current = JSON.parse(currentHeadersStr);
-    var sessionId = current["mcp-session-id"] || current["MCP-Session-Id"];
-    if (sessionId) {
-      var url = targetUrls[x];
-      if (url) {
-        sessionPairs.push(url.trim() + "|" + sessionId.trim());
+    try {
+      var current = JSON.parse(currentHeadersStr);
+      if (current) {
+        var sessionId = current["mcp-session-id"] || current["MCP-Session-Id"];
+        if (sessionId) {
+          var url = targetUrls[x];
+          if (url) {
+            sessionPairs.push(url.trim() + "|" + sessionId.trim());
+          }
+        }
       }
+    } catch (e) {
+      print("Failed to parse headers for index " + index + ": " + e.message);
     }
   }
 }

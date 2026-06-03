@@ -24,6 +24,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -63,13 +64,26 @@ public class ServiceFanout implements Execution {
             return t;
           });
 
-  // A shared HttpClient for all fan-out operations.
-  // HttpClient is immutable and thread-safe, so it can be created once and reused.
-  private static final HttpClient httpClient =
-      HttpClient.newBuilder()
-          .executor(httpClientExecutor)
-          .followRedirects(HttpClient.Redirect.NEVER)
-          .build();
+  // A cache of HttpClients mapped by their connect timeout.
+  // This allows reusing HttpClient instances (and their connection pools)
+  // while supporting different connect timeouts.
+  private static final Map<Duration, HttpClient> httpClientCache = new ConcurrentHashMap<>();
+
+  private static HttpClient getHttpClient(Duration connectTimeout) {
+    Duration key = (connectTimeout != null) ? connectTimeout : Duration.ZERO;
+    return httpClientCache.computeIfAbsent(
+        key,
+        timeout -> {
+          HttpClient.Builder builder =
+              HttpClient.newBuilder()
+                  .executor(httpClientExecutor)
+                  .followRedirects(HttpClient.Redirect.NEVER);
+          if (!timeout.isZero()) {
+            builder.connectTimeout(timeout);
+          }
+          return builder.build();
+        });
+  }
 
   private final Map<String, String> properties;
 
@@ -145,6 +159,7 @@ public class ServiceFanout implements Execution {
       String bodySpec = getOptionalProperty("body", null);
       String headersSpec = getOptionalProperty("headers", null);
       String timeoutSecondsSpec = getOptionalProperty("timeout-seconds", "30");
+      String connectTimeoutSecondsSpec = getOptionalProperty("connect-timeout-seconds", null);
       String outputPrefixSpec = getOptionalProperty("output-variable-prefix", "fanout.response");
       String continueOnErrorSpec = getOptionalProperty("continue-on-error", "false");
 
@@ -160,6 +175,7 @@ public class ServiceFanout implements Execution {
       String body = resolveTemplate(bodySpec, messageContext);
       String headersValue = resolveTemplate(headersSpec, messageContext);
       String timeoutSecondsValue = resolveTemplate(timeoutSecondsSpec, messageContext);
+      String connectTimeoutSecondsValue = resolveTemplate(connectTimeoutSecondsSpec, messageContext);
       String outputPrefix = resolveTemplate(outputPrefixSpec, messageContext);
       boolean continueOnError =
           Boolean.parseBoolean(resolveTemplate(continueOnErrorSpec, messageContext));
@@ -170,6 +186,16 @@ public class ServiceFanout implements Execution {
       } catch (NumberFormatException e) {
         throw new IllegalStateException(
             "'timeout-seconds' must be a valid integer. Value was: " + timeoutSecondsValue);
+      }
+
+      Duration connectTimeout = null;
+      if (connectTimeoutSecondsValue != null && !connectTimeoutSecondsValue.trim().isEmpty()) {
+        try {
+          connectTimeout = Duration.ofSeconds(Integer.parseInt(connectTimeoutSecondsValue));
+        } catch (NumberFormatException e) {
+          throw new IllegalStateException(
+              "'connect-timeout-seconds' must be a valid integer. Value was: " + connectTimeoutSecondsValue);
+        }
       }
 
       // Parse the RAW spec before resolving templates. 
@@ -186,6 +212,7 @@ public class ServiceFanout implements Execution {
       }
 
       // 3. Create tasks for parallel execution
+      HttpClient client = getHttpClient(connectTimeout);
       List<String> resolvedUrls = new ArrayList<>();
       List<CompletableFuture<HttpResponse<java.io.InputStream>>> futures = new ArrayList<>();
       for (int i = 0; i < urls.size(); i++) {
@@ -235,7 +262,7 @@ public class ServiceFanout implements Execution {
             requestBuilder.method(method.toUpperCase(), bodyPublisher);
 
             futures.add(
-                httpClient.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream()));
+                client.sendAsync(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream()));
           } catch (Exception e) {
             // Create a failed future for invalid URLs or other setup issues
             futures.add(CompletableFuture.failedFuture(e));

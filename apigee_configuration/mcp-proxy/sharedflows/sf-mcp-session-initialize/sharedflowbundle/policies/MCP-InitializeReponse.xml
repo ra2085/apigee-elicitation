@@ -9,7 +9,7 @@
     </Headers>
     <StatusCode>200</StatusCode>
     <Path/>
-    <Payload>{"jsonrpc":"2.0","id":{apigee.payload.json-rpc.request.id},"result":{"protocolVersion":"2025-06-18","capabilities":{"experimental":{},"prompts":{"listChanged":true},"resources":{"subscribe":false,"listChanged":true},"tools":{"listChanged":true}},"serverInfo":{"name":"wmt-server","version":"1.12.4"},"instructions":"MCP server that includes all tools that you can have access to."}}
+    <Payload>{"jsonrpc":"2.0","id":{jsonrpc_opid},"result":{"protocolVersion":"2025-06-18","capabilities":{"experimental":{},"prompts":{"listChanged":true},"resources":{"subscribe":false,"listChanged":true},"tools":{"listChanged":true}},"serverInfo":{"name":"wmt-server","version":"1.12.4"},"instructions":"MCP server that includes all tools that you can have access to."}}
         </Payload>
   </Set>
   <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>

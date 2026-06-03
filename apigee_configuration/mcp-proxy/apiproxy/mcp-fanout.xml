@@ -19,7 +19,6 @@
     <Policy>MCP-SessionDelete</Policy>
     <Policy>MCP-ToolListResponse</Policy>
     <Policy>MCP-PromptsListResponse</Policy>
-    <Policy>MCP-Parse</Policy>
     <Policy>CORS</Policy>
     <Policy>MCP-EventPollCallout</Policy>
     <Policy>MCP-LookupTargetSessionId</Policy>

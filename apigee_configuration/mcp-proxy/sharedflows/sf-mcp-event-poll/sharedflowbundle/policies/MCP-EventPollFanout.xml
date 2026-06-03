@@ -7,6 +7,7 @@
     <Property name="headers">Accept:text/event-stream|mcp-session-id:{mcp_target_session_id_{servicefanout_current_index}}</Property>
     <!-- We set a short timeout for transient SSE polling -->
     <Property name="timeout-seconds">2</Property>
+    <Property name="connect-timeout-seconds">2</Property>
     <Property name="continue-on-error">true</Property>
     <Property name="output-variable-prefix">fanout_event_poll</Property>
   </Properties>

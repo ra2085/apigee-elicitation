@@ -151,6 +151,7 @@ public class ServiceFanout implements Execution {
       String bodySpec = getOptionalProperty("body", null);
       String headersSpec = getOptionalProperty("headers", null);
       String timeoutSecondsSpec = getOptionalProperty("timeout-seconds", "30");
+      String connectTimeoutSecondsSpec = getOptionalProperty("connect-timeout-seconds", null);
       String outputPrefixSpec = getOptionalProperty("output-variable-prefix", "fanout.response");
       String continueOnErrorSpec = getOptionalProperty("continue-on-error", "false");
 
@@ -166,6 +167,7 @@ public class ServiceFanout implements Execution {
       final String body = resolveTemplate(bodySpec, messageContext);
       String headersValue = resolveTemplate(headersSpec, messageContext);
       String timeoutSecondsValue = resolveTemplate(timeoutSecondsSpec, messageContext);
+      String connectTimeoutSecondsValue = resolveTemplate(connectTimeoutSecondsSpec, messageContext);
       final String outputPrefix = resolveTemplate(outputPrefixSpec, messageContext);
       final boolean continueOnError =
           Boolean.parseBoolean(resolveTemplate(continueOnErrorSpec, messageContext));
@@ -176,6 +178,18 @@ public class ServiceFanout implements Execution {
       } catch (NumberFormatException e) {
         throw new IllegalStateException(
             "'timeout-seconds' must be a valid integer. Value was: " + timeoutSecondsValue);
+      }
+
+      final int connectTimeoutMillis;
+      if (connectTimeoutSecondsValue != null && !connectTimeoutSecondsValue.trim().isEmpty()) {
+        try {
+          connectTimeoutMillis = Integer.parseInt(connectTimeoutSecondsValue) * 1000;
+        } catch (NumberFormatException e) {
+          throw new IllegalStateException(
+              "'connect-timeout-seconds' must be a valid integer. Value was: " + connectTimeoutSecondsValue);
+        }
+      } else {
+        connectTimeoutMillis = timeoutMillis;
       }
 
       // Use a map of templates for headers, to be resolved for each request.
@@ -221,8 +235,8 @@ public class ServiceFanout implements Execution {
                 try {
                   URL requestUrl = new URL(resolvedUrl);
                   connection = (HttpURLConnection) requestUrl.openConnection();
-                  connection.setRequestMethod(method.toUpperCase());
-                  connection.setConnectTimeout(timeoutMillis);
+                   connection.setRequestMethod(method.toUpperCase());
+                  connection.setConnectTimeout(connectTimeoutMillis);
                   connection.setReadTimeout(timeoutMillis);
                   connection.setInstanceFollowRedirects(false);
 

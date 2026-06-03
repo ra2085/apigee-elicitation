@@ -7,10 +7,6 @@
       </Step>
       <Step>
         <Condition>(request.verb = "POST") and (request.content Like "*method*")</Condition>
-        <Name>MCP-Parse</Name>
-      </Step>
-      <Step>
-        <Condition>(request.verb = "POST") and (request.content Like "*method*")</Condition>
         <Name>MCP-Method</Name>
       </Step>
       <Step>

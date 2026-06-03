@@ -6,6 +6,7 @@
     <Property name="urls">{mcp_target_urls}</Property>
     <Property name="method">DELETE</Property>
     <Property name="headers">Content-Type:application/json|Accept:application/json|mcp-session-id:{mcp_target_session_id_{servicefanout_current_index}}</Property>
+    <Property name="connect-timeout-seconds">5</Property>
     <!-- It's best to continue even if one deletion fails -->
     <Property name="continue-on-error">true</Property>
     <Property name="output-variable-prefix">fanout_delete</Property>
