@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage name="MCP-SetActiveTarget">
+  <DisplayName>MCP-SetActiveTarget</DisplayName>
+  <AssignVariable>
+    <Name>mcp_active_target</Name>
+    <Ref>mcp_target_url</Ref>
+  </AssignVariable>
+</AssignMessage>

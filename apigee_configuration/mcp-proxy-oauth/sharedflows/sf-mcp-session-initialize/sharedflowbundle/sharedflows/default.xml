@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+  <Step>
+    <Name>MCP-InitializeSession</Name>
+  </Step>
+  <Step>
+    <Name>MCP-SetDummyClientId</Name>
+  </Step>
+  <Step>
+    <Name>MCP-GenerateSessionToken</Name>
+  </Step>
+  <Step>
+    <Name>MCP-SaveSessionAttributes</Name>
+  </Step>
+  <Step>
+    <Name>MCP-InitializeReponse</Name>
+  </Step>
+</SharedFlow>

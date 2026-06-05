@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage continueOnError="false" enabled="true" name="MCP-PromptsListResponse">
+  <DisplayName>MCP-PromptsListResponse</DisplayName>
+  <Properties/>
+  <Set>
+    <Headers>
+      <Header name="content-type">application/json</Header>
+      <Header name="mcp-session-id">{mcp_session_id}</Header>
+    </Headers>
+    <Payload>{
+  "jsonrpc": "2.0",
+  "id":{jsonrpc_opid},
+  "error": {
+    "code": -32601,
+    "message": "Method not found: prompts/list is not implemented by this server."
+  }
+}</Payload>
+    <StatusCode>200</StatusCode>
+  </Set>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="true" transport="http" type="response"/>
+</AssignMessage>

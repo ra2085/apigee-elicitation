@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage continueOnError="false" enabled="true" name="MCP-PingResponse">
+  <DisplayName>MCP-PingResponse</DisplayName>
+  <Properties/>
+  <Set>
+    <Headers>
+      <Header name="Content-Type">text/event-stream</Header>
+      <Header name="mcp-session-id">{mcp_session_id}</Header>
+    </Headers>
+    <StatusCode>200</StatusCode>
+    <Payload>event: ping
+retry: 60000
+data: keep-alive
+
+</Payload>
+  </Set>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="true" transport="http" type="response"/>
+</AssignMessage>

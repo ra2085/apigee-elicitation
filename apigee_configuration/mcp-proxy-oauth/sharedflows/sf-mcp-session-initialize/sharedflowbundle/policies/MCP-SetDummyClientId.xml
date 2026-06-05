@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage name="MCP-SetDummyClientId">
+  <Set>
+    <FormParams>
+      <FormParam name="client_id">DGSWylclt8hjURaF3oSDRvor32M9NATbzlRYUAZjJOYiwXlL</FormParam>
+      <FormParam name="grant_type">client_credentials</FormParam>
+    </FormParams>
+  </Set>
+  <AssignVariable>
+    <Name>oauth_external_authorization_status</Name>
+    <Value>true</Value>
+  </AssignVariable>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="false" transport="http" type="request">request</AssignTo>
+</AssignMessage>

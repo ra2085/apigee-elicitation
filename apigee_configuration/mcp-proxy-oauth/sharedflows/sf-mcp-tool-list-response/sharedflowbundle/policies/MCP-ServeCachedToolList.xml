@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="MCP-ServeCachedToolList">
+    <DisplayName>MCP-ServeCachedToolList</DisplayName>
+    <AssignVariable>
+        <Name>mcp_opid_match</Name>
+        <Value>"id"\s*:\s*\d+</Value>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>mcp_opid_replace</Name>
+        <Template>"id": {jsonrpc_opid}</Template>
+    </AssignVariable>
+    <AssignVariable>
+        <Name>mcp_session_tools_served</Name>
+        <Template>{replaceAll(mcp_session_tools,mcp_opid_match,mcp_opid_replace)}</Template>
+    </AssignVariable>
+    <Set>
+        <Headers>
+            <Header name="content-type">text/event-stream</Header>
+            <Header name="mcp-session-id">{mcp_session_id}</Header>
+        </Headers>
+        <Payload contentType="text/event-stream">data: {mcp_session_tools_served}
+
+</Payload>
+        <StatusCode>200</StatusCode>
+    </Set>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>

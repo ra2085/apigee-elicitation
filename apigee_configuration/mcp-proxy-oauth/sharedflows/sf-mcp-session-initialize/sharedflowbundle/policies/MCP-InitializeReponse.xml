@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="MCP-InitializeReponse">
+  <DisplayName>MCP-InitializeReponse</DisplayName>
+  <Properties/>
+  <Set>
+    <Headers>
+      <Header name="Content-Type">application/json</Header>
+      <Header name="mcp-session-id">{mcp_session_id}</Header>
+    </Headers>
+    <StatusCode>200</StatusCode>
+    <Path/>
+    <Payload>{"jsonrpc":"2.0","id":{jsonrpc_opid},"result":{"protocolVersion":"2025-06-18","capabilities":{"experimental":{},"prompts":{"listChanged":true},"resources":{"subscribe":false,"listChanged":true},"tools":{"listChanged":true}},"serverInfo":{"name":"wmt-server","version":"1.12.4"},"instructions":"MCP server that includes all tools that you can have access to."}}
+        </Payload>
+  </Set>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="true" transport="http" type="response"/>
+</AssignMessage>

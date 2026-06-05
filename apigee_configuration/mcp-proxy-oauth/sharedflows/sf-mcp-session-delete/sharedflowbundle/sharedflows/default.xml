@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+    <!--FANOUT-->
+    <Step>
+        <Condition>(mcp_target_sessions != null) and (mcp_target_sessions != "") and (mcp_target_sessions != "{}")</Condition>
+        <Name>MCP-PrepareDeleteFanout</Name>
+    </Step>
+    <Step>
+        <Condition>(mcp_target_sessions != null) and (mcp_target_sessions != "") and (mcp_target_sessions != "{}")</Condition>
+        <Name>MCP-DeleteTargetSessions-Fanout</Name>
+    </Step>
+    <Step>
+        <Name>MCP-InvalidateSessionToken</Name>
+    </Step>
+    <Step>
+        <Name>MCP-DeleteSessionResponse</Name>
+    </Step>
+</SharedFlow>

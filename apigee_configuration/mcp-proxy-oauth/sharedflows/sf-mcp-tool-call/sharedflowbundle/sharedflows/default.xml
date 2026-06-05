@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+  <Step>
+    <Name>MCP-LookupSessionTools</Name>
+  </Step>
+  <Step>
+    <Condition>lookupcache.MCP-LookupSessionTools.cachehit = "false"</Condition>
+    <Name>MCP-SessionToolsExpired</Name>
+  </Step>
+  <Step>
+    <Condition>lookupcache.MCP-LookupSessionTools.cachehit = "true"</Condition>
+    <Name>MCP-ValidateToolCalled</Name>
+  </Step>
+  <Step>
+    <Condition>lookupcache.MCP-LookupSessionTools.cachehit = "true"</Condition>
+    <Name>MCP-SetActiveTarget</Name>
+  </Step>
+  <Step>
+    <Condition>lookupcache.MCP-LookupSessionTools.cachehit = "true"</Condition>
+    <Name>MCP-UpdateActiveTargetToken</Name>
+  </Step>
+  <Step>
+    <Name>MCP-CheckTargetSession</Name>
+  </Step>
+  <Step>
+    <Condition>(lookupcache.MCP-LookupTargetSession.cachehit = "false")</Condition>
+    <Name>MCP-InitializeRequest</Name>
+  </Step>
+  <Step>
+    <Condition>(lookupcache.MCP-LookupTargetSession.cachehit = "false")</Condition>
+    <Name>MCP-InitializedRequest</Name>
+  </Step>
+  <Step>
+    <Condition>(lookupcache.MCP-LookupTargetSession.cachehit = "false")</Condition>
+    <Name>MCP-UpdateTargetSessions</Name>
+  </Step>
+  <Step>
+    <Condition>(lookupcache.MCP-LookupTargetSession.cachehit = "false")</Condition>
+    <Name>MCP-UpdateTargetSessionsToken</Name>
+  </Step>
+  <Step>
+    <Name>MCP-SetRequest</Name>
+  </Step>
+</SharedFlow>

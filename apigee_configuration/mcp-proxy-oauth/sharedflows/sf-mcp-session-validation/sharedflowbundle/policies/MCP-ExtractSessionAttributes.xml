@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage name="MCP-ExtractSessionAttributes">
+  <DisplayName>MCP-ExtractSessionAttributes</DisplayName>
+  <AssignVariable>
+    <Name>mcp_session_id</Name>
+    <Ref>accesstoken.mcp_session_id</Ref>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_session_client_info</Name>
+    <Ref>accesstoken.mcp_session_client_info</Ref>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_sessions</Name>
+    <Ref>accesstoken.mcp_target_sessions</Ref>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_active_target</Name>
+    <Ref>accesstoken.mcp_active_target</Ref>
+  </AssignVariable>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</AssignMessage>

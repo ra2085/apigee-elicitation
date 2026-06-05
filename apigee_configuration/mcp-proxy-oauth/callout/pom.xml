@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright 2025 Google LLC
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.google.apigee.callouts</groupId>
+  <artifactId>service-fanout</artifactId>
+  <version>1.0</version>
+  <name>ServiceFanout</name>
+  <url>http://maven.apache.org</url>
+  <packaging>jar</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>11</java.version>
+    <apiproxy.java.rsrc.dir>../apiproxy/resources/java</apiproxy.java.rsrc.dir>
+    <sf.tool-list.java.rsrc.dir>../sharedflows/sf-mcp-tool-list/sharedflowbundle/resources/java</sf.tool-list.java.rsrc.dir>
+    <sf.event-poll.java.rsrc.dir>../sharedflows/sf-mcp-event-poll/sharedflowbundle/resources/java</sf.event-poll.java.rsrc.dir>
+    <sf.session-delete.java.rsrc.dir>../sharedflows/sf-mcp-session-delete/sharedflowbundle/resources/java</sf.session-delete.java.rsrc.dir>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>artifact-registry</id>
+      <url>https://us-maven.pkg.dev/apigee-release/apigee-java-callout-dependencies</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.apigee.gateway.libraries</groupId>
+      <artifactId>message-flow</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>com.apigee.infra.libraries</groupId>
+      <artifactId>expressions</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+      <type>jar</type>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>7.7.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.2.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeScope>provided</excludeScope>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <compilerArgs>
+            <!-- <arg>-verbose</arg> -->
+            <arg>-Xlint:unchecked,deprecation</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+        <configuration>
+          <archive>
+            <!-- do not include the pom.xml file in the generated jar -->
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>ant1</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <delete>
+                  <fileset dir="${apiproxy.java.rsrc.dir}" includes="*.jar" />
+                  <fileset dir="${sf.tool-list.java.rsrc.dir}" includes="*.jar" />
+                  <fileset dir="${sf.event-poll.java.rsrc.dir}" includes="*.jar" />
+                  <fileset dir="${sf.session-delete.java.rsrc.dir}" includes="*.jar" />
+                </delete>
+              </target>
+            </configuration>
+          </execution>
+          <execution>
+            <id>ant2</id>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <copy todir="${apiproxy.java.rsrc.dir}">
+                  <fileset dir="${project.build.directory}">
+                    <include name="${project.build.finalName}.jar" />
+                  </fileset>
+                  <mapper type="flatten" />
+                </copy>
+                <copy todir="${sf.tool-list.java.rsrc.dir}">
+                  <fileset dir="${project.build.directory}">
+                    <include name="${project.build.finalName}.jar" />
+                  </fileset>
+                  <mapper type="flatten" />
+                </copy>
+                <copy todir="${sf.event-poll.java.rsrc.dir}">
+                  <fileset dir="${project.build.directory}">
+                    <include name="${project.build.finalName}.jar" />
+                  </fileset>
+                  <mapper type="flatten" />
+                </copy>
+                <copy todir="${sf.session-delete.java.rsrc.dir}">
+                  <fileset dir="${project.build.directory}">
+                    <include name="${project.build.finalName}.jar" />
+                  </fileset>
+                  <mapper type="flatten" />
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+          <excludes>
+            <exclude>org.apache.commons:commons-collections4</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

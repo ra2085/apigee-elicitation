@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlowBundle revision="1" name="sf-mcp-session-validation">
+    <DisplayName>sf-mcp-session-validation</DisplayName>
+    <Description>Shared Flow for MCP Session Validation</Description>
+    <SharedFlows>
+        <SharedFlow>default</SharedFlow>
+    </SharedFlows>
+    <Policies>
+        <Policy>MCP-VerifySessionToken</Policy>
+        <Policy>MCP-ExtractSessionAttributes</Policy>
+        <Policy>MCP-InvalidSession</Policy>
+    </Policies>
+</SharedFlowBundle>

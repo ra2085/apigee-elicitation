@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="MCP-InitializedResponse">
+  <DisplayName>MCP-InitializedResponse</DisplayName>
+  <Properties/>
+  <Set>
+    <Headers>
+      <Header name="mcp-session-id">{mcp_session_id}</Header>
+    </Headers>
+    <StatusCode>202</StatusCode>
+    <Path/>
+  </Set>
+  <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+  <AssignTo createNew="true" transport="http" type="response"/>
+</AssignMessage>

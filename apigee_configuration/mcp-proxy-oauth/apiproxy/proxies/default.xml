@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndpoint name="default">
+  <PreFlow>
+    <Request>
+      <Step>
+        <Name>CORS</Name>
+      </Step>
+      <Step>
+        <Condition>(request.verb = "POST") and (request.content Like "*method*")</Condition>
+        <Name>MCP-Method</Name>
+      </Step>
+      <Step>
+        <Name>MCP-Session</Name>
+      </Step>
+      <Step>
+        <Condition>(request.verb = "POST") and (request.content Not Like "*method*")</Condition>
+        <Name>MCP-SessionValidation</Name>
+      </Step>
+      <Step>
+        <Condition>(request.verb = "POST") and (request.content Not Like "*method*")</Condition>
+        <Name>MCP-SetActiveTargetFromToken</Name>
+      </Step>
+    </Request>
+  </PreFlow>
+  <PostFlow>
+    <Request/>
+    <Response>
+      <Step>
+        <Name>MCP-SetResponseSessionHeader</Name>
+      </Step>
+    </Response>
+  </PostFlow>
+  <Flows>
+    <Flow name="initialize">
+      <Condition>(jsonrpc_method = "initialize") and (request.verb = "POST")</Condition>
+      <Response>
+        <Step>
+          <Name>MCP-SessionInitialize</Name>
+        </Step>
+      </Response>
+    </Flow>
+    <Flow name="notifications/initialized">
+      <Condition>(jsonrpc_method = "notifications/initialized") and (request.verb = "POST")</Condition>
+      <Request>
+        <Step>
+          <Name>MCP-SessionValidation</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>MCP-InitializedResponse</Name>
+        </Step>
+      </Response>
+    </Flow>
+    <Flow name="tools/list">
+      <Condition>(jsonrpc_method = "tools/list") and (request.verb = "POST")</Condition>
+      <Request>
+        <Step>
+          <Name>MCP-SessionValidation</Name>
+        </Step>
+        <Step>
+          <Name>MCP-ToolList</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>MCP-ToolListResponse</Name>
+        </Step>
+      </Response>
+    </Flow>
+    <Flow name="tools/call">
+      <Condition>(jsonrpc_method = "tools/call") and (request.verb = "POST")</Condition>
+      <Request>
+        <Step>
+          <Name>MCP-SessionValidation</Name>
+        </Step>
+        <Step>
+          <Name>MCP-ToolCall</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>MCP-ToolsCallResponse</Name>
+        </Step>
+      </Response>
+    </Flow>
+    <Flow name="prompts/list">
+      <Condition>(jsonrpc_method = "prompts/list") and (request.verb = "POST")</Condition>
+      <Request>
+        <Step>
+          <Name>MCP-SessionValidation</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>MCP-PromptsListResponse</Name>
+        </Step>
+      </Response>
+    </Flow>
+    <Flow name="get">
+      <Condition>(request.verb = "GET")</Condition>
+      <Request>
+        <Step>
+          <Name>MCP-SessionValidation</Name>
+        </Step>
+      </Request>
+      <Response>
+        <Step>
+          <Name>MCP-EventPollCallout</Name>
+        </Step>
+      </Response>
+    </Flow>
+    <Flow name="delete">
+      <Condition>(request.verb = "DELETE")</Condition>
+      <Request>
+        <Step>
+          <Name>MCP-SessionValidation</Name>
+        </Step>
+        <Step>
+          <Name>MCP-SessionDelete</Name>
+        </Step>
+      </Request>
+      <Response>
+      </Response>
+    </Flow>
+  </Flows>
+  <HTTPProxyConnection>
+    <BasePath>/mcpf</BasePath>
+  </HTTPProxyConnection>
+  <RouteRule name="mcp-list">
+    <Condition>(jsonrpc_method = "tools/list") and (request.verb = "POST")</Condition>
+  </RouteRule>
+  <RouteRule name="mcp-prompts-list">
+    <Condition>(jsonrpc_method = "prompts/list") and (request.verb = "POST")</Condition>
+  </RouteRule>
+  <RouteRule name="session-handler">
+    <Condition>((jsonrpc_method = "initialize") or (jsonrpc_method = "notifications/initialized")) and (request.verb = "POST")</Condition>
+  </RouteRule>
+  <RouteRule name="session-get">
+    <Condition>(request.verb = "GET")</Condition>
+  </RouteRule>
+  <RouteRule name="session-delete">
+    <Condition>(request.verb = "DELETE")</Condition>
+  </RouteRule>
+  <RouteRule name="mcp-server">
+    <TargetEndpoint>mcp-server</TargetEndpoint>
+  </RouteRule>
+</ProxyEndpoint>

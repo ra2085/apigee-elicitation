@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OAuthV2 continueOnError="true" name="MCP-VerifySessionToken">
+  <DisplayName>MCP-VerifySessionToken</DisplayName>
+  <Operation>VerifyAccessToken</Operation>
+  <AccessToken>request.header.mcp-session-id</AccessToken>
+</OAuthV2>

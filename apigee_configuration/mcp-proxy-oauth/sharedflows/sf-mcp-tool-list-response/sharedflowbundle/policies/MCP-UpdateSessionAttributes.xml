@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SetOAuthV2Info name="MCP-UpdateSessionAttributes">
+  <AccessToken ref="mcp_session_id"/>
+  <Attributes>
+    <Attribute name="mcp_target_sessions" ref="mcp_target_sessions"/>
+  </Attributes>
+</SetOAuthV2Info>

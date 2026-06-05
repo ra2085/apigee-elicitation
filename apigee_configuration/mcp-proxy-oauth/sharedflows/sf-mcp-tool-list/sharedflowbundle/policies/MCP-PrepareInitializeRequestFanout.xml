@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage continueOnError="false" enabled="true" name="MCP-PrepareInitializeRequestFanout">
+  <DisplayName>MCP-PrepareInitializeRequestFanout</DisplayName>
+  <Properties/>
+  <AssignVariable>
+    <Name>match_brackets</Name>
+    <Value>[\[\]\"]</Value>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_urls_pre</Name>
+    <Template>{jsonPath('$[*].mcp_target_url',propertyset.mcp-targets.mcp_targets,true)}</Template>
+  </AssignVariable>
+  <AssignVariable>
+    <Name>mcp_target_urls</Name>
+    <Template>{replaceAll(mcp_target_urls_pre,match_brackets,'')}</Template>
+  </AssignVariable>
+  <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+  <AssignTo createNew="false" transport="http" type="request"/>
+</AssignMessage>

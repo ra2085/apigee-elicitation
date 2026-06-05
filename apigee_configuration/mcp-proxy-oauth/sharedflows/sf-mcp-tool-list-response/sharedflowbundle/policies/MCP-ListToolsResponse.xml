@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<AssignMessage async="false" continueOnError="false" enabled="true" name="MCP-ListToolsResponse">
+  <DisplayName>MCP-ListToolsResponse</DisplayName>
+  <Properties/>
+<Set>
+  <Headers>
+    <Header name="content-type">text/event-stream</Header>
+    <Header name="mcp-session-id">{mcp_session_id}</Header>
+  </Headers>
+  <StatusCode>200</StatusCode>
+</Set>
+<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+<AssignTo createNew="true" transport="http" type="response"/>
+</AssignMessage>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Javascript continueOnError="false" enabled="true" timeLimit="200" name="MCP-CheckTargetSession">
+  <DisplayName>MCP-CheckTargetSession</DisplayName>
+  <Properties/>
+  <ResourceURL>jsc://mcp-check-target-session.js</ResourceURL>
+</Javascript>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SharedFlow name="default">
+    <Step>
+        <Name>MCP-LookupSessionTools</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit != "true"</Condition>
+        <Name>MCP-PrepareInitializeRequestFanout</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit != "true"</Condition>
+        <Name>MCP-InitializeRequestFanout</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit != "true"</Condition>
+        <Name>MCP-PrepareInitializedFanout</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit != "true"</Condition>
+        <Name>MCP-InitializedRequestFanout</Name>
+    </Step>
+    <Step>
+        <Condition>lookupcache.MCP-LookupSessionTools.cachehit != "true"</Condition>
+        <Name>MCP-ToolListRequestFanout</Name>
+    </Step>
+</SharedFlow>
