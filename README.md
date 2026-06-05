@@ -36,12 +36,12 @@ To support multi-region high-availability, session failover, and high-performanc
 graph TD
     Client[Client / Agent] ==>|Single Request / Session ID| Proxy[Apigee Gateway Proxy]
     
-    subgraph Apigee Gateway (Hybrid Storage Layer)
+    subgraph "Apigee Gateway (Hybrid Storage Layer)"
         Proxy -->|VerifyAccessToken| OAuthStore["Global OAuth Store (Cassandra)"]
         Proxy -->|LookupCache| L1Cache["Regional L1 Cache (In-Memory)"]
     end
     
-    subgraph Target MCP Landscape
+    subgraph "Target MCP Landscape"
         Proxy ==>|ServiceFanout| Target1["mcp-server-1 (Weather)"]
         Proxy ==>|ServiceFanout| Target2["mcp-server-2 (Products)"]
         Proxy ==>|ServiceFanout| Target3["mcp-server-3 (Cart)"]
@@ -84,7 +84,7 @@ The sequence below outlines the step-by-step lifecycle of an elicitation session
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Client as Client (AI Agent / User)
+    actor Client as "Client (AI Agent / User)"
     participant Proxy as Apigee Gateway Proxy
     participant OAuth as Global OAuth Store
     participant Cache as Regional L1 Cache
