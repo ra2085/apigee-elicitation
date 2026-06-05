@@ -28,81 +28,110 @@ elicitation_sample/
 └── README.md             # Setup and usage guide
 ```
 
+## Apigee Gateway Architecture: Distributed Session Synchronizer (OAuth + L1 Cache)
+
+To support multi-region high-availability, session failover, and high-performance routing across a distributed MCP microservice landscape, the Apigee Gateway leverages a hybrid architecture combining a globally-replicated **Apigee OAuth 2.0 Token Store** and a local, regional **L1 Cache**.
+
+```mermaid
+graph TD
+    Client[Client / Agent] ==>|Single Request / Session ID| Proxy[Apigee Gateway Proxy]
+    
+    subgraph Apigee Gateway (Hybrid Storage Layer)
+        Proxy -->|VerifyAccessToken| OAuthStore["Global OAuth Store (Cassandra)"]
+        Proxy -->|LookupCache| L1Cache["Regional L1 Cache (In-Memory)"]
+    end
+    
+    subgraph Target MCP Landscape
+        Proxy ==>|ServiceFanout| Target1["mcp-server-1 (Weather)"]
+        Proxy ==>|ServiceFanout| Target2["mcp-server-2 (Products)"]
+        Proxy ==>|ServiceFanout| Target3["mcp-server-3 (Cart)"]
+        Proxy ==>|Direct Route| ActiveTarget["elicitation-server (Forms)"]
+    end
+    
+    L1Cache -.->|L2 Miss Recovery| Target1 & Target2 & Target3
+    OAuthStore ---|Attributes: Client Info, Target Session Map, Active Target| Proxy
+```
+
+### Core Architecture Design:
+
+1. **Globally Replicated Session Authorization (OAuth Store)**
+   Rather than storing session metadata in regional caches (which fail during cross-region load balancing or failover) or KVM databases (which lack TTL auto-pruning, causing storage growth), we utilize the Apigee native OAuth 2.0 Token Store.
+   * Session IDs are imported as OAuth Access Tokens.
+   * Session metadata (Client Info, Target Session Mapping, Active Target) is attached as **token custom attributes**.
+   * Attributes automatically replicate globally across all regions via Cassandra.
+   * When the session's TTL (1 hour) expires, Apigee **automatically purges** the token and all associated attributes, preventing database growth.
+
+2. **Regional L1 Cache for Verbose Payloads**
+   Apigee custom attributes are limited to **2 KB per attribute value**. To store the aggregated tools list (which can easily exceed this limit), we use a regional L1 Cache.
+   * The list of discovered tools is compressed and persisted locally in each region's cache.
+   * If a region failover occurs, the new region experiences a cache miss. It automatically self-heals by querying the target backends using the session IDs stored in the globally replicated token attributes, rebuilds the cache locally, and services the client request without breaking the session state.
+
+3. **Index-Based Target Mapping Optimization**
+   To ensure the list of backend URL and session ID mappings (e.g., `http://backend-url|session-uuid,...`) stays well below the 2 KB token attribute limit, target session IDs are stored using their **array index** mapping from `mcp-targets.properties` config (e.g., `0|session-uuid-1,1|session-uuid-2`). This keeps the mapping size constant (~40 bytes per backend) regardless of target URL lengths.
+
+4. **Parallel Fan-Out Engine (`ServiceFanout.java`)**
+   To provide unified tool discovery, session initialization, and event polling across a distributed microservice landscape, the Apigee Gateway leverages a custom Java Callout (`ServiceFanout.java`) that performs:
+   * **Concurrent HTTP/2 Connections:** Parallel asynchronous requests (`HttpClient.sendAsync()`) to all target microservices bypass sequential TCP connection bottlenecks.
+   * **Concurrent Stream Reading:** Response bodies (such as Server-Sent Events or heavy JSON payloads) are read inside a dedicated background daemon thread pool to prevent thread leakage.
+   * **Unified Timeout Enforcement:** A strict, unified timeout guard is enforced concurrently across all threads. If any target blocks for longer than the allowed threshold, its background socket and input stream are instantly closed. Crucially, **timeouts do not accumulate sequentially**, ensuring the gateway response remains fast and bounded regardless of the number of targets fanned out to.
+
+---
+
 ## Elicitation Interaction Flow
 
-The sequence below outlines how a client interacts with the gateway proxy to dynamically elicit and normalize structured forms:
+The sequence below outlines the step-by-step lifecycle of an elicitation session, showing how global OAuth validation and L1 caching are integrated:
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Client as Client (AI Agent / User)
     participant Proxy as Apigee Gateway Proxy
-    participant Server as Form Elicitation MCP Server
+    participant OAuth as Global OAuth Store
+    participant Cache as Regional L1 Cache
+    participant Backends as Target MCP Backends
 
-    Note over Client,Server: 1. Tool Discovery & Setup
-    Client->>Proxy: POST /mcpf (tools/list)
-    Proxy->>Server: GET /mcp (tools/list)
-    Server-->>Proxy: Return Form Schemas (feedback, software_request)
-    Proxy-->>Client: Rendered Tool Definitions (JSON/Markdown)
+    Note over Client,Backends: 1. Session Initialization
+    Client->>Proxy: POST /mcpf (initialize)
+    Proxy->>Proxy: Generate Session UUID
+    Proxy->>OAuth: GenerateAccessToken & Save Custom Attributes (mcp_target_sessions, mcp_active_target)
+    Proxy-->>Client: 200 OK (Returns Session UUID as Access Token)
 
-    Note over Client,Server: 2. Initialize Elicitation Session
-    Client->>Proxy: POST /mcpf (start_elicitation) with form_type="feedback"
-    Proxy->>Server: POST /mcp (initialize + session register)
-    Server-->>Proxy: Generate session_id + First suggested question
-    Proxy-->>Client: "What is your full name? (session_id: a1b2c3d4)"
-
-    Note over Client,Server: 3. Iterative Elicitation Loop
-    loop Until Form Is Fully Validated & Completed
-        Client->>Proxy: POST /mcpf (submit_field) with field_name, value
-        Proxy->>Server: Route tool execution to session_id
-        Alt Value is Invalid (e.g. Rating: 6)
-            Server-->>Proxy: 400 Validation Error (Out-of-bounds)
-            Proxy-->>Client: "Rating must be between 1 and 5. Please try again."
-        Else Value is Conversational / Valid (e.g. would_recommend: "y")
-            Server->>Server: Auto-normalize "y" to True
-            Server-->>Proxy: 200 OK with updated checklist & Next Suggested Question
-            Proxy-->>Client: Updated progress check list + next question
-        End
+    Note over Client,Backends: 2. Tool Discovery & Setup (Hybrid L1/L2 Cache)
+    Client->>Proxy: POST /mcpf (tools/list) [Auth: session-id]
+    Proxy->>OAuth: VerifyAccessToken (Fetch Attributes)
+    Proxy->>Cache: Lookup tools list in Regional Cache (L1)
+    alt L1 Cache Hit
+        Cache-->>Proxy: Return tools list
+    else L1 Cache Miss (Failover or Eviction)
+        Proxy->>Backends: Parallel Fan-Out tools/list (using target session IDs from token)
+        Backends-->>Proxy: Return schemas
+        Proxy->>Cache: Populate tools list in Regional L1 Cache
+        Proxy->>OAuth: Update target sessions attributes
     end
+    Proxy-->>Client: Returns unified tool definitions JSON
 
-    Note over Client,Server: 4. Form Finalization
-    Server-->>Proxy: Form completely filled. Return compiled results.
-    Proxy-->>Client: Premium finalized summary table in Markdown
-```
-
-## Apigee Gateway Architecture: Parallel Fan-Out Engine
-
-To provide unified tool discovery, session initialization, and event polling across a distributed microservice landscape, the Apigee Gateway leverages an **optimized parallel fan-out engine** built inside a custom Java Callout (`ServiceFanout.java`).
-
-```mermaid
-graph LR
-    Client[Client / Agent] ==>|Single Request| Gateway[Apigee Gateway Proxy]
-    subgraph Java Callout Engine (ServiceFanout)
-        Gateway -->|Concurrent sendAsync| ThreadPool[Fixed Thread Pool]
-        ThreadPool --> Target1(mcp-server-1: Weather)
-        ThreadPool --> Target2(mcp-server-2: Products)
-        ThreadPool --> Target3(mcp-server-3: Cart)
-        ThreadPool --> Target4(elicitation-server: Forms)
+    Note over Client,Backends: 3. Dynamic Tool Execution (Routing)
+    Client->>Proxy: POST /mcpf (tools/call) [Auth: session-id]
+    Proxy->>OAuth: VerifyAccessToken & Extract Attributes
+    Proxy->>Cache: Lookup tools list
+    alt Tools list in cache
+        Proxy->>Proxy: Validate called tool schema & Set Active Target
+        Proxy->>OAuth: Update active target attribute on Token
+        Proxy->>Proxy: Extract target session ID using Index Lookup
+        Proxy->>Backends: Route tool execution with target session ID header
+        Backends-->>Proxy: Return output
+    else Tools list expired/missing in Cache
+        Proxy-->>Client: 400 Bad Request (JSON-RPC Error -32001: Run tools/list first)
     end
-    Target1 & Target2 & Target3 & Target4 ===>|Parallel Stream Read| Buffer[Thread-safe Aggregator]
-    Buffer ==>|Aggregated Payload| Client
+    Proxy-->>Client: Returns execution result
+
+    Note over Client,Backends: 4. Session Deletion
+    Client->>Proxy: DELETE /mcpf [Auth: session-id]
+    Proxy->>OAuth: VerifyAccessToken
+    Proxy->>Backends: Parallel Fan-Out Session Deletion
+    Proxy->>OAuth: InvalidateAccessToken (Revokes token & deletes attributes globally)
+    Proxy-->>Client: 200 OK
 ```
-
-### Core Features of the Fan-Out Engine:
-
-1. **Concurrent HTTP/2 Connections:**
-   Using Java's native HTTP Client, connections to all 5 target microservices are initialized and established simultaneously (`httpClient.sendAsync()`), bypassing sequential TCP connection bottlenecks.
-
-2. **Concurrent Stream Reading:**
-   Response bodies (such as Server-Sent Events or heavy JSON payloads) are read inside a dedicated background daemon thread pool. This prevents thread leakage inside the Apigee container on redeployment.
-
-3. **Unified Timeout Enforcement:**
-   When reading streaming data (such as polling idle endpoints that keep connections open with empty keep-alive pings), a strict, unified timeout guard is enforced concurrently across all threads:
-   ```java
-   CompletableFuture.allOf(bodyReadFutures)
-       .get(timeoutSeconds, TimeUnit.SECONDS);
-   ```
-   If any target blocks for longer than the allowed threshold (e.g., `2` seconds), its background socket and input stream are instantly closed to unblock resources. Crucially, **timeouts do not accumulate sequentially**, ensuring the gateway response remains fast and bounded regardless of the number of targets fanned out to.
 
 ---
 
