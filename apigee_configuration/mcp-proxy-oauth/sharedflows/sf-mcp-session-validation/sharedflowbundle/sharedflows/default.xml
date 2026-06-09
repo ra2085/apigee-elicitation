@@ -4,11 +4,11 @@
         <Name>MCP-VerifySessionToken</Name>
     </Step>
     <Step>
-        <Condition>oauthv2.MCP-VerifySessionToken.failed = "true"</Condition>
+        <Condition>oauthV2.MCP-VerifySessionToken.failed = "true"</Condition>
         <Name>MCP-InvalidSession</Name>
     </Step>
     <Step>
-        <Condition>oauthv2.MCP-VerifySessionToken.failed = "false"</Condition>
+        <Condition>oauthV2.MCP-VerifySessionToken.failed = "false"</Condition>
         <Name>MCP-ExtractSessionAttributes</Name>
     </Step>
 </SharedFlow>
