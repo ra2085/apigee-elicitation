@@ -321,9 +321,9 @@ To integrate this Form Elicitation tool suite into Claude Desktop or other MCP-e
 {
   "mcpServers": {
     "form-elicitor": {
-      "command": "/Users/gonzalezruben/Documents/elicitation_sample/.venv/bin/python3",
+      "command": "/Users/some/Documents/elicitation_sample/.venv/bin/python3",
       "args": [
-        "/Users/gonzalezruben/Documents/elicitation_sample/server.py"
+        "/Users/some/Documents/elicitation_sample/server.py"
       ]
     }
   }
