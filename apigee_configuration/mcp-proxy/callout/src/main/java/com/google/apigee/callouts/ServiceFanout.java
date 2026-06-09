@@ -219,10 +219,15 @@ public class ServiceFanout implements Execution {
         String url = urls.get(i);
         String resolvedUrl = resolveTemplate(url, messageContext);
         if (resolvedUrl != null && !resolvedUrl.trim().isEmpty()) {
+          resolvedUrl = resolvedUrl.trim();
           messageContext.setVariable(VAR_PREFIX + "current_index", i + 1);
           messageContext.setVariable(VAR_PREFIX + "current_url", resolvedUrl);
           resolvedUrls.add(resolvedUrl);
           try {
+            String lowercaseUrl = resolvedUrl.toLowerCase();
+            if (!lowercaseUrl.startsWith("http://") && !lowercaseUrl.startsWith("https://")) {
+              throw new IllegalArgumentException("URI scheme must be http or https");
+            }
             HttpRequest.Builder requestBuilder =
                 HttpRequest.newBuilder()
                     .uri(new URI(resolvedUrl))

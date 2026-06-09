@@ -233,9 +233,15 @@ public class ServiceFanout implements Execution {
               public SimpleHttpResponse get() {
                 HttpURLConnection connection = null;
                 try {
+                  if (resolvedUrl != null) {
+                    String lowercaseUrl = resolvedUrl.trim().toLowerCase();
+                    if (!lowercaseUrl.startsWith("http://") && !lowercaseUrl.startsWith("https://")) {
+                      throw new IllegalArgumentException("URI scheme must be http or https");
+                    }
+                  }
                   URL requestUrl = new URL(resolvedUrl);
                   connection = (HttpURLConnection) requestUrl.openConnection();
-                   connection.setRequestMethod(method.toUpperCase());
+                  connection.setRequestMethod(method.toUpperCase());
                   connection.setConnectTimeout(connectTimeoutMillis);
                   connection.setReadTimeout(timeoutMillis);
                   connection.setInstanceFollowRedirects(false);

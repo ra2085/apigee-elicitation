@@ -84,4 +84,28 @@ public class ServiceFanoutTest {
     ExecutionResult result = callout.execute(msgCtxt, exeCtxt);
     assertEquals(result, ExecutionResult.SUCCESS);
   }
+
+  @Test
+  public void testUnresolvedUrlsVariable() {
+    Map<String, String> props = new HashMap<>();
+    props.put("urls", "{mcp_target_urls}");
+    props.put("continue-on-error", "false");
+
+    ServiceFanout callout = new ServiceFanout(props);
+    ExecutionResult result = callout.execute(msgCtxt, exeCtxt);
+    assertEquals(result, ExecutionResult.ABORT);
+    verify(msgCtxt).setVariable(eq("servicefanout_error"), contains("URI scheme must be http or https"));
+  }
+
+  @Test
+  public void testUrlNoScheme() {
+    Map<String, String> props = new HashMap<>();
+    props.put("urls", "localhost:8080");
+    props.put("continue-on-error", "false");
+
+    ServiceFanout callout = new ServiceFanout(props);
+    ExecutionResult result = callout.execute(msgCtxt, exeCtxt);
+    assertEquals(result, ExecutionResult.ABORT);
+    verify(msgCtxt).setVariable(eq("servicefanout_error"), contains("URI scheme must be http or https"));
+  }
 }
